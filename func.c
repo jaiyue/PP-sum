@@ -406,6 +406,7 @@ unsigned char channel, float scale_factor) {
                 if (scaled_value > 255) {
                     scaled_value = 255;
                 }
+                channel_data[pixel_idx] = (unsigned char)scaled_value;
             }
         }
     }
