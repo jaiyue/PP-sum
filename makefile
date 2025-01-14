@@ -1,25 +1,41 @@
 CC = gcc
 CFLAGS = -Wall -g
-target = runme 
-library = libFilmMaster2000.a
-input = test.bin
-output = output.bin
+TARGET = runme
+LIBRARY = libFilmMaster2000.a
+INPUT = video_data.bin
+OUTPUTS = output1.bin output2.bin output3.bin output4.bin output5.bin output6.bin output7.bin output8.bin
 
-all: $(target) $(library)
+.PHONY: all test clean
 
-$(target): main.o libFilmMaster2000.a
-	$(CC) $(CFLAGS) $^ -o $@ -L. -lFilmMaster2000
+all: $(TARGET)
 
-$(library): func.o
-	ar rcs libFilmMaster2000.a func.o
+$(TARGET): main.o $(LIBRARY)
+	$(CC) $(CFLAGS) main.o -o $(TARGET) -L. -lFilmMaster2000
+
+$(LIBRARY): func.o
+	ar rcs $(LIBRARY) func.o
+
 func.o: func.c func.h
-	$(CC) $(CFLAGS) -c $< -o $@
-main.o: main.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c func.c -o func.o
 
-test: $(target) 
-	./$(target) $(input) $(output)
-	@echo output file: $(output)
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+test: $(TARGET)
+	@echo Running tests...
+	./$(TARGET) $(INPUT) output1.bin -M reverse
+	./$(TARGET) $(INPUT) output2.bin -M swap_channel 1,2
+	./$(TARGET) $(INPUT) output3.bin -M clip_channel 1 [10,200]
+	./$(TARGET) $(INPUT) output4.bin -M scale_channel 1 1.5
+	./$(TARGET) $(INPUT) output5.bin -S reverse
+	./$(TARGET) $(INPUT) output6.bin -S swap_channel 1,2
+	./$(TARGET) $(INPUT) output7.bin -S clip_channel 1 [10,200]
+	./$(TARGET) $(INPUT) output8.bin -S scale_channel 1 1.5
+
+
+	@echo All tests completed.
 
 clean:
-	rm -f *.o $(target) $(library) $(output)
+	@echo Cleaning up...
+	rm -f *.o $(TARGET) $(LIBRARY) $(OUTPUTS)
+	@echo Clean done.

@@ -15,7 +15,7 @@ struct Video{   //Header and Frames of Video
     unsigned char *data;
 };
 
-void read_headerdata(FILE *input, struct Video video);
+void read_headerdata(FILE *input, struct Video *video);
 void write_file(const char *output_file, struct Video video,size_t total_size);
 void reverse_video_performance(const char *input_file, const char *output_file);
 void reverse_video_memory(const char *input_file, const char *output_file);
@@ -25,10 +25,5 @@ void clip_channel_performance(const char *input_file, const char *output_file, u
 void clip_channel_memory(const char *input_file, const char *output_file, unsigned char channel, unsigned char min_val, unsigned char max_val);
 void scale_channel_performance(const char *input_file, const char *output_file, unsigned char channel, float scale_factor);
 void scale_channel_memory(const char *input_file, const char *output_file, unsigned char channel, float scale_factor);
-
-
-
-
-
 
 #endif
