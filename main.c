@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "func.h"
-#include <sys/resource.h>
-
 
 void print_usage() {
     printf("Usage: ./runme [input] [output] [-S/-M] <operation> [params]\n");
