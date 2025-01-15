@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     int operation_start_index = 3;
     if (argc > 4 && (strcmp(argv[3], "-S") == 0 ||
     strcmp(argv[3], "-M") == 0)) {
-        is_memory = (strcmp(argv[3], "-S") == 0);
+        is_memory = (strcmp(argv[3], "-M") == 0);
         // If -S/-M is specified, the operation parameters
         // start with the 4th parameter.
         operation_start_index = 4;
@@ -38,11 +38,7 @@ int main(int argc, char *argv[]) {
     float scale_factor;
 
     if (strcmp(operation, "reverse") == 0) {
-        if (is_memory) {
-            reverse_video_performance(input_file, output_file);
-        } else {
-            reverse_video_memory(input_file, output_file);
-        }
+        reverse_video(input_file, output_file, is_memory);
     } else if (strcmp(operation, "swap_channel") == 0) {
         if (argc < operation_start_index + 2) {
             printf("Error: Two channels (ch1, ch2) are "
@@ -65,15 +61,8 @@ int main(int argc, char *argv[]) {
             "than 0 (1-based indexing).\n");
             return 1;
         }
-
-        ch1 -= 1;
-        ch2 -= 1;
         printf("Channel 1: %d, Channel 2: %d\n", ch1, ch2);
-        if (is_memory) {
-            swap_channel_performance(input_file, output_file, ch1, ch2);
-        } else {
-            swap_channel_memory(input_file, output_file, ch1, ch2);
-        }
+        swap_channels(input_file, output_file, ch1, ch2, is_memory);
     } else if (strcmp(operation, "clip_channel") == 0) {
         if (argc < operation_start_index + 3) {
             printf("Error: Channel and range (min, max) are"
@@ -81,16 +70,11 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         channel = (unsigned char)
-        atoi(argv[operation_start_index + 1]) - 1;  // 1-based to 0-based
+        atoi(argv[operation_start_index + 1]);  // 1-based to 0-based
         sscanf(argv[operation_start_index + 2],
         "%hhu,%hhu", &min_val, &max_val);
-        if (is_memory) {
-            clip_channel_performance(input_file, output_file,
-            channel, min_val, max_val);
-        } else {
-            clip_channel_memory(input_file, output_file,
-            channel, min_val, max_val);
-        }
+        clip_channel(input_file, output_file, channel, min_val, max_val, is_memory);
+
     } else if (strcmp(operation, "scale_channel") == 0) {
         if (argc < operation_start_index + 2) {
             printf("Error: Channel and scale factor are"
@@ -100,13 +84,7 @@ int main(int argc, char *argv[]) {
         channel = (unsigned char)
         atoi(argv[operation_start_index + 1]) - 1;  // 1-based to 0-based
         scale_factor = atof(argv[operation_start_index + 2]);
-        if (is_memory) {
-            scale_channel_performance(input_file, output_file,
-            channel, scale_factor);
-        } else {
-            scale_channel_memory(input_file, output_file,
-            channel, scale_factor);
-        }
+        scale_channel(input_file, output_file, channel, scale_factor, is_memory);
     } else {
         print_usage();
         return 1;
