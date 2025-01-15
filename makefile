@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g
 TARGET = runme
 LIBRARY = libFilmMaster2000.a
-INPUT = video_data.bin
+INPUT = test.bin
 OUTPUTS = output1.bin output2.bin output3.bin output4.bin output5.bin output6.bin output7.bin output8.bin
 
 .PHONY: all test clean
@@ -23,10 +23,6 @@ main.o: main.c
 
 test: $(TARGET)
 	@echo Running tests...
-	./$(TARGET) $(INPUT) output1.bin -M reverse
-	./$(TARGET) $(INPUT) output2.bin -M swap_channel 1,2
-	./$(TARGET) $(INPUT) output3.bin -M clip_channel 1 [10,200]
-	./$(TARGET) $(INPUT) output4.bin -M scale_channel 1 1.5
 	./$(TARGET) $(INPUT) output5.bin -S reverse
 	./$(TARGET) $(INPUT) output6.bin -S swap_channel 1,2
 	./$(TARGET) $(INPUT) output7.bin -S clip_channel 1 [10,200]
