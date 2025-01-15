@@ -56,11 +56,6 @@ int main(int argc, char *argv[]) {
         printf("Parsed Channels: ch1 = %hhu, ch2 = %hhu\n", ch1, ch2);
 
         // Ensure that the parameters are within the valid range
-        if (ch1 == 0 || ch2 == 0) {
-            printf("Error: Channel indices must be greater"
-            "than 0 (1-based indexing).\n");
-            return 1;
-        }
         printf("Channel 1: %d, Channel 2: %d\n", ch1, ch2);
         swap_channels(input_file, output_file, ch1, ch2, is_memory);
     } else if (strcmp(operation, "clip_channel") == 0) {
@@ -73,7 +68,8 @@ int main(int argc, char *argv[]) {
         atoi(argv[operation_start_index + 1]);  // 1-based to 0-based
         sscanf(argv[operation_start_index + 2],
         "%hhu,%hhu", &min_val, &max_val);
-        clip_channel(input_file, output_file, channel, min_val, max_val, is_memory);
+        clip_channel(input_file, output_file, channel,
+        min_val, max_val, is_memory);
 
     } else if (strcmp(operation, "scale_channel") == 0) {
         if (argc < operation_start_index + 2) {
@@ -84,7 +80,8 @@ int main(int argc, char *argv[]) {
         channel = (unsigned char)
         atoi(argv[operation_start_index + 1]) - 1;  // 1-based to 0-based
         scale_factor = atof(argv[operation_start_index + 2]);
-        scale_channel(input_file, output_file, channel, scale_factor, is_memory);
+        scale_channel(input_file, output_file, channel,
+        scale_factor, is_memory);
     } else {
         print_usage();
         return 1;

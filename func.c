@@ -14,7 +14,8 @@ void read_headerdata(FILE *input, struct Video *video) {
     fread(&video->width, sizeof(unsigned char), 1, input);
 
     // Check the maximum size of the video
-    if (video->channels > MAX_CH || video->height > MAX_H || video->width > MAX_W) {
+    if (video->channels > MAX_CH || video->height > MAX_H
+    || video->width > MAX_W) {
         fprintf(stderr, "Error: Video size exceeds maximum limit\n");
         exit(EXIT_FAILURE);
     }
@@ -27,7 +28,8 @@ void write_header(FILE *output, const struct Video *video) {
     fwrite(&video->width, sizeof(unsigned char), 1, output);
 }
 
-void reverse_video(const char *input_file, const char *output_file, int memory_free) {
+void reverse_video(const char *input_file, const char *output_file,
+int memory_free) {
     FILE *input = fopen(input_file, "rb");
     if (!input) {
         perror("Error opening input file");
@@ -55,10 +57,11 @@ void reverse_video(const char *input_file, const char *output_file, int memory_f
     }
 
     if (memory_free) {
-        // Reduce memory usage by processing frames one at a time in reverse order
+        // Reduce memory usage by processing frames one at
+        // a time in reverse order
         fseek(input, 0, SEEK_END);
-        long file_size = ftell(input);
-        long header_size = file_size - (video.frames * frame_size);
+        int64_t file_size = ftell(input);
+        int64_t header_size = file_size - (video.frames * frame_size);
 
         for (int64_t i = video.frames - 1; i >= 0; i--) {
             fseek(input, header_size + i * frame_size, SEEK_SET);
@@ -83,7 +86,8 @@ void reverse_video(const char *input_file, const char *output_file, int memory_f
 
         for (int64_t i = 0; i < video.frames / 2; i++) {
             unsigned char *frame_data_start = &video.data[i * frame_size];
-            unsigned char *frame_data_end = &video.data[(video.frames - 1 - i) * frame_size];
+            unsigned char *frame_data_end = &video.data[(video.frames - 1 - i)
+            * frame_size];
             for (size_t j = 0; j < frame_size; j++) {
                 unsigned char temp = frame_data_start[j];
                 frame_data_start[j] = frame_data_end[j];
@@ -100,7 +104,8 @@ void reverse_video(const char *input_file, const char *output_file, int memory_f
     printf("Video frames reversed and saved to %s\n", output_file);
 }
 
-void swap_channels(const char *input_file, const char *output_file, unsigned char ch1, unsigned char ch2, int memory_free) {
+void swap_channels(const char *input_file, const char *output_file,
+unsigned char ch1, unsigned char ch2, int memory_free) {
     FILE *input = fopen(input_file, "rb");
     if (!input) {
         printf("Error opening input file.\n");
@@ -199,7 +204,9 @@ void swap_channels(const char *input_file, const char *output_file, unsigned cha
     printf("Channels swapped and saved to %s\n", output_file);
 }
 
-void clip_channel(const char *input_file, const char *output_file, unsigned char channel, unsigned char min_val, unsigned char max_val, int memory_free) {
+void clip_channel(const char *input_file, const char *output_file,
+unsigned char channel, unsigned char min_val, unsigned char max_val,
+int memory_free) {
     FILE *input = fopen(input_file, "rb");
     if (!input) {
         printf("Error opening input file.\n");
@@ -235,7 +242,8 @@ void clip_channel(const char *input_file, const char *output_file, unsigned char
         for (int64_t f = 0; f < video.frames; ++f) {
             fread(frame_data, 1, frame_size, input);
             if (channel < video.channels) {
-                unsigned char *channel_data = frame_data + channel * channel_size;
+                unsigned char *channel_data = frame_data + channel *
+                channel_size;
                 for (size_t i = 0; i < channel_size; ++i) {
                     if (channel_data[i] < min_val) {
                         channel_data[i] = min_val;
@@ -251,7 +259,8 @@ void clip_channel(const char *input_file, const char *output_file, unsigned char
         fclose(input);
         fclose(output);
 
-        printf("Video processed in memory-free mode and saved to %s\n", output_file);
+        printf("Video processed in memory-free mode and saved to %s\n",
+        output_file);
     } else {
         size_t total_size = video.frames * frame_size;
         video.data = (unsigned char *)malloc(total_size);
@@ -289,11 +298,13 @@ void clip_channel(const char *input_file, const char *output_file, unsigned char
         fclose(output);
         free(video.data);
 
-        printf("Video processed in performance mode and saved to %s\n", output_file);
+        printf("Video processed in performance mode and saved to %s\n",
+        output_file);
     }
 }
 
-void scale_channel(const char *input_file, const char *output_file, unsigned char channel, float scale_factor, int memory_free) {
+void scale_channel(const char *input_file, const char *output_file,
+unsigned char channel, float scale_factor, int memory_free) {
     FILE *input = fopen(input_file, "rb");
     if (!input) {
         printf("Error opening input file.\n");
@@ -319,8 +330,8 @@ void scale_channel(const char *input_file, const char *output_file, unsigned cha
     }
 
     write_header(output, &video);
-
-    if (memory_free) { // Memory-free mode: Process one frame at a time
+    // Memory-free mode: Process one frame at a time
+    if (memory_free) {
         unsigned char *frame_data = (unsigned char *)malloc(frame_size);
         if (!frame_data) {
             printf("Memory allocation failed!\n");
@@ -333,11 +344,13 @@ void scale_channel(const char *input_file, const char *output_file, unsigned cha
             fread(frame_data, 1, frame_size, input);
 
             if (channel < video.channels) {
-                unsigned char *channel_data = frame_data + channel * channel_size;
+                unsigned char *channel_data = frame_data +
+                channel * channel_size;
 
                 for (size_t i = 0; i < channel_size; ++i) {
                     int scaled_value = (int)(channel_data[i] * scale_factor);
-                    channel_data[i] = (unsigned char)(scaled_value > 255 ? 255 : (scaled_value < 0 ? 0 : scaled_value));
+                    channel_data[i] = (unsigned char)(scaled_value > 255 ? 255 :
+                    (scaled_value < 0 ? 0 : scaled_value));
                 }
             }
 
@@ -345,7 +358,7 @@ void scale_channel(const char *input_file, const char *output_file, unsigned cha
         }
 
         free(frame_data);
-    } else { // Performance mode: Load all data into memory
+    } else {  // Performance mode: Load all data into memory
         size_t total_size = video.frames * frame_size;
         video.data = (unsigned char *)malloc(total_size);
         if (!video.data) {
@@ -364,8 +377,10 @@ void scale_channel(const char *input_file, const char *output_file, unsigned cha
             for (int64_t h = 0; h < video.height; ++h) {
                 for (int64_t w = 0; w < video.width; ++w) {
                     size_t pixel_idx = h * video.width + w;
-                    int scaled_value = (int)(channel_data[pixel_idx] * scale_factor);
-                    channel_data[pixel_idx] = (unsigned char)(scaled_value > 255 ? 255 : scaled_value);
+                    int scaled_value = (int)(channel_data[pixel_idx]
+                    * scale_factor);
+                    channel_data[pixel_idx] = (unsigned char)
+                    (scaled_value > 255 ? 255 : scaled_value);
                 }
             }
         }
@@ -376,6 +391,6 @@ void scale_channel(const char *input_file, const char *output_file, unsigned cha
 
     fclose(input);
     fclose(output);
-
-    printf("Video processed and saved to %s\n", output_file);
+    printf("Video processed and saved to %s\n", output);
 }
+

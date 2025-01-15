@@ -24,10 +24,9 @@ main.o: main.c
 test: $(TARGET)
 	@echo Running tests...
 	./$(TARGET) $(INPUT) output5.bin -S reverse
-	./$(TARGET) $(INPUT) output6.bin -S swap_channel 1,2
+	./$(TARGET) $(INPUT) output6.bin -S swap_channel 0,2
 	./$(TARGET) $(INPUT) output7.bin -S clip_channel 1 [10,200]
 	./$(TARGET) $(INPUT) output8.bin -S scale_channel 1 1.5
-
 
 	@echo All tests completed.
 
