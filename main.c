@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "func.h"
+#include <sys/resource.h>
+
 
 void print_usage() {
     printf("Usage: ./runme [input] [output] [-S/-M] <operation> [params]\n");
@@ -65,9 +67,14 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         channel = (unsigned char)
-        atoi(argv[operation_start_index + 1]);  // 1-based to 0-based
-        sscanf(argv[operation_start_index + 2],
-        "%hhu,%hhu", &min_val, &max_val);
+        atoi(argv[operation_start_index + 1]);
+        if (sscanf(argv[operation_start_index + 2],
+        "[%hhu,%hhu]", &min_val, &max_val) != 2) {
+            printf("Error: Invalid range format."
+            "Use [min,max] (e.g., [10,200]).\n");
+            return 1;
+    }
+        printf("Channel: %d, min: %d, max:%d\n", channel, min_val, max_val);
         clip_channel(input_file, output_file, channel,
         min_val, max_val, is_memory);
 
@@ -78,14 +85,14 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         channel = (unsigned char)
-        atoi(argv[operation_start_index + 1]) - 1;  // 1-based to 0-based
+        atoi(argv[operation_start_index + 1]);
         scale_factor = atof(argv[operation_start_index + 2]);
+        printf("Channel: %d\n", channel);
         scale_channel(input_file, output_file, channel,
         scale_factor, is_memory);
     } else {
         print_usage();
         return 1;
     }
-
     return 0;
 }

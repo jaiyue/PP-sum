@@ -267,39 +267,35 @@ int memory_free) {
         if (!video.data) {
             printf("Memory allocation failed!\n");
             fclose(input);
+            fclose(output);
             return;
         }
 
         fread(video.data, 1, total_size, input);
-        fclose(input);
 
         for (int64_t f = 0; f < video.frames; ++f) {
             unsigned char *frame_start = video.data + f * frame_size;
             unsigned char *channel_data = frame_start + channel * channel_size;
 
-            for (size_t i = 0; i < channel_size; ++i) {
-                if (channel_data[i] < min_val) {
-                    channel_data[i] = min_val;
-                } else if (channel_data[i] > max_val) {
-                    channel_data[i] = max_val;
+            for (int64_t h = 0; h < video.height; ++h) {
+                for (int64_t w = 0; w < video.width; ++w) {
+                    size_t pixel_idx = h * video.width + w;
+                    if (channel_data[pixel_idx] < min_val) {
+                        channel_data[pixel_idx] = min_val;
+                    } else if (channel_data[pixel_idx] > max_val) {
+                        channel_data[pixel_idx] = max_val;
+                }
                 }
             }
         }
 
-        FILE *output = fopen(output_file, "wb");
-        if (!output) {
-            printf("Error opening output file.\n");
-            free(video.data);
-            return;
-        }
-
-        write_header(output, &video);
         fwrite(video.data, 1, total_size, output);
-        fclose(output);
         free(video.data);
 
         printf("Video processed in performance mode and saved to %s\n",
         output_file);
+        fclose(input);
+        fclose(output);
     }
 }
 
@@ -358,6 +354,11 @@ unsigned char channel, float scale_factor, int memory_free) {
         }
 
         free(frame_data);
+        fclose(input);
+        fclose(output);
+
+        printf("Video processed in memory-free mode and saved to %s\n",
+        output_file);
     } else {  // Performance mode: Load all data into memory
         size_t total_size = video.frames * frame_size;
         video.data = (unsigned char *)malloc(total_size);
@@ -388,9 +389,8 @@ unsigned char channel, float scale_factor, int memory_free) {
         fwrite(video.data, 1, total_size, output);
         free(video.data);
     }
-
+    printf("Video processed and saved to %p\n", output);
     fclose(input);
     fclose(output);
-    printf("Video processed and saved to %s\n", output);
 }
 
