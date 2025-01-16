@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
 
     // Check if -s or -m is specified
     int operation_start_index = 3;
-    if (argc > 4 && (strcmp(argv[3], "-S") == 0 || strcmp(argv[3], "-M") == 0)) {
+    if (argc > 4 && (strcmp(argv[3], "-S") == 0
+    || strcmp(argv[3], "-M") == 0)) {
         if (strcmp(argv[3], "-S") == 0) {
             mode = 1;  // Performance optimization
         } else if (strcmp(argv[3], "-M") == 0) {
@@ -73,13 +74,14 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         channel = (unsigned char)
-        atoi(argv[operation_start_index + 1]);  
-        if (sscanf(argv[operation_start_index + 2], "[%hhu,%hhu]", &min_val, &max_val) != 2) {
-        printf("Error: Invalid range format. Use [min,max] (e.g., [10,200]).\n");
+        atoi(argv[operation_start_index + 1]);
+        if (sscanf(argv[operation_start_index + 2],
+        "[%hhu,%hhu]", &min_val, &max_val) != 2) {
+        printf("Error: Invalid range format. Use [min,max]"
+        "(e.g., [10,200]).\n");
         return 1;
     }
-        
-        printf("Channel: %d, min: %d, max:%d\n", channel,min_val,max_val);
+        printf("Channel: %d, min: %d, max:%d\n", channel, min_val, max_val);
         clip_channel(input_file, output_file, channel,
         min_val, max_val, mode);
 
