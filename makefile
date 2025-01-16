@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -g 
+CFLAGS = -Wall -g -fopenmp
 TARGET = runme
 LIBRARY = libFilmMaster2000.a
 INPUT = test.bin
-OUTPUTS = breverse.bin bscale.bin bclip.bin bswap.bin creverse.bin cswap.bin cclip.bin cscale.bin
+OUTPUTS = breverse.bin bscale.bin bclip.bin bswap.bin creverse.bin cswap.bin cclip.bin cscale.bin areverse.bin aswap.bin aclip.bin ascale.bin
 
 .PHONY: all test clean
 
@@ -23,6 +23,10 @@ main.o: main.c
 
 test: $(TARGET)
 	@echo Running tests...
+	./$(TARGET) $(INPUT) areverse.bin reverse
+	./$(TARGET) $(INPUT) aswap.bin swap_channel 0,2
+	./$(TARGET) $(INPUT) aclip.bin clip_channel 1 [10,200]
+	./$(TARGET) $(INPUT) ascale.bin scale_channel 1 1.5
 	./$(TARGET) $(INPUT) breverse.bin -S reverse
 	./$(TARGET) $(INPUT) bswap.bin -S swap_channel 0,2
 	./$(TARGET) $(INPUT) bclip.bin -S clip_channel 1 [10,200]
