@@ -26,7 +26,7 @@ This approach processes data in smaller portions. A portion of data (excluding m
 
 The final implementation enhances the normal mode by introducing OpenMP parallelization to improve speed. Multiple threads are used, and mp_get_wtime() replaces clock() for accurate timing. Although memory usage increases due to thread overhead, this approach balances speed and memory efficiency effectively.
 
-![image.png](attachment:image.png)
+![image.png](image.png)
 
 **In different modes, memory and runtime**
 
